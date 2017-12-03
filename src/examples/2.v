@@ -22,8 +22,8 @@ module example_2
 );
 
 reg [7:0] num = 7'h00;
-reg [7:0] seg_1;
-reg [7:0] seg_2;
+wire [7:0] seg_1;
+wire [7:0] seg_2;
 
 //wire w_segment1_a;
 //wire w_segment1_b;
@@ -43,15 +43,14 @@ reg [7:0] seg_2;
 
 always @(posedge i_clk)
 begin
-	num = 7'h00;
 	if (i_switch_1 == 1'b1)
 		num = num + 1;
 	if (i_switch_2 == 1'b1)
-		num = num + 2;
+		num = num | 1;
 	if (i_switch_3 == 1'b1)
-		num = num + 4;
+		num = num << 1;
 	if (i_switch_4 == 1'b1)
-		num = num + 8;
+		num = 7'h00;
 end
 
 bin_to_7seg inst
@@ -61,19 +60,20 @@ bin_to_7seg inst
 	.out_seg2(seg_2)
 );
 
-assign o_segment1_a = seg_1[0];
-assign o_segment1_b = seg_1[1];
-assign o_segment1_c = seg_1[2];
-assign o_segment1_d = seg_1[3];
-assign o_segment1_e = seg_1[4];
-assign o_segment1_f = seg_1[5];
-assign o_segment1_g = seg_2[6];
-assign o_segment2_a = seg_2[0];
-assign o_segment2_b = seg_2[1];
-assign o_segment2_c = seg_2[2];
-assign o_segment2_d = seg_2[3];
-assign o_segment2_e = seg_2[4];
-assign o_segment2_f = seg_2[5];
-assign o_segment2_g = seg_2[6];
+// Apparently, segments need to be driven low to be lit...
+assign o_segment1_a = ~seg_2[6];
+assign o_segment1_b = ~seg_2[5];
+assign o_segment1_c = ~seg_2[4];
+assign o_segment1_d = ~seg_2[3];
+assign o_segment1_e = ~seg_2[2];
+assign o_segment1_f = ~seg_2[1];
+assign o_segment1_g = ~seg_2[0];
+assign o_segment2_a = ~seg_1[6];
+assign o_segment2_b = ~seg_1[5];
+assign o_segment2_c = ~seg_1[4];
+assign o_segment2_d = ~seg_1[3];
+assign o_segment2_e = ~seg_1[2];
+assign o_segment2_f = ~seg_1[1];
+assign o_segment2_g = ~seg_1[0];
 
 endmodule
