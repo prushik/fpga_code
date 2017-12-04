@@ -1,7 +1,6 @@
 module uart_rx
-#(parameter 
-	clks_per_bit = 217, // (25mhz (fpga clock) / 115200 (baudrate))
-	clks_mid_bit = 108
+#(
+	parameter clks_per_bit = 217 // (25mhz (fpga clock) / 115200 (baudrate))
 )
 (
 	input		i_clock,
@@ -10,6 +9,7 @@ module uart_rx
 	output [7:0]o_rx_byte
 );
 
+parameter	clks_mid_bit	= 108;
 reg	[7:0]	r_cycle_count	= 8'h00;
 reg	[2:0]	r_index			= 3'h0;
 reg			r_dv			= 0;
@@ -49,10 +49,10 @@ begin
 			begin
 				r_cycle_count <= 0;
 				r_rx_byte[r_index] <= i_rx_uart;
+				if (r_index == 7)
+					r_state = 3;
 				r_index <= r_index + 1;
 			end
-			if (r_index == 8)
-				r_state = 3;
 		end
 		3:
 		begin

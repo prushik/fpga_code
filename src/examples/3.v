@@ -23,9 +23,9 @@ module example_3
 	output o_segment2_g
 );
 
-reg [7:0] num;
-reg [7:0] seg_1;
-reg [7:0] seg_2;
+wire [7:0] num;
+wire [7:0] seg_1;
+wire [7:0] seg_2;
 
 uart_rx uart_inst
 (
