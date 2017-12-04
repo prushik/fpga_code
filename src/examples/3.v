@@ -1,9 +1,12 @@
-module example_2
+module example_3
 (
+	input i_clk,
 	input i_switch_1,
 	input i_switch_2,
 	input i_switch_3,
 	input i_switch_4,
+	input i_uart_rx,
+	output o_uart_tx,
 	output o_segment1_a,
 	output o_segment1_b,
 	output o_segment1_c,
@@ -20,20 +23,17 @@ module example_2
 	output o_segment2_g
 );
 
-reg [7:0] num = 7'h00;
+reg [7:0] num;
 reg [7:0] seg_1;
 reg [7:0] seg_2;
 
-always @(posedge i_switch_1)
-begin
-	num = num + 1;
-	if (i_switch_2 == 1'b1)
-		num = num ^ 1;
-	if (i_switch_3 == 1'b1)
-		num = num << 1;
-	if (i_switch_4 == 1'b1)
-		num = 7'h00;
-end
+uart_rx uart_inst
+(
+	.i_clock(i_clk),
+	.i_rx_uart(i_uart_rx),
+	.o_rx_dv(o_uart_tx),
+	.o_rx_byte(num)
+);
 
 bin_to_7seg inst
 (
