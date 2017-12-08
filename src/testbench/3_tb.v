@@ -17,8 +17,13 @@ module UART_RX_TB();
   
   reg r_Clock = 0;
   reg r_RX_Serial = 1;
+  wire w_TX_Serial;
+  reg rdv = 0;
+  wire wdv;
   wire [7:0] w_RX_Byte;
-  
+  reg [7:0] w_TX_Byte = 8'h44;
+
+assign wdv = rdv;
 
   // Takes in input byte and serializes it 
   task UART_WRITE_BYTE;
@@ -43,17 +48,23 @@ module UART_RX_TB();
       #(c_BIT_PERIOD);
      end
   endtask // UART_WRITE_BYTE
-  
-  
+
   uart_rx #(.clks_per_bit(c_CLKS_PER_BIT)) UART_RX_INST
     (.i_clock(r_Clock),
      .i_rx_uart(r_RX_Serial),
-     .o_rx_dv(),
+     .o_rx_dv(wdv),
      .o_rx_byte(w_RX_Byte)
      );
-  
-  always
-    #(c_CLOCK_PERIOD_NS/2) r_Clock <= !r_Clock;
+
+  uart_tx #(.clks_per_bit(c_CLKS_PER_BIT)) UART_TX_INST
+    (.i_clock(r_Clock),
+     .o_tx_uart(w_TX_Serial),
+     .i_dv(wdv),
+     .i_tx_byte(w_TX_Byte)
+     );
+
+always
+  #(c_CLOCK_PERIOD_NS/2) r_Clock <= !r_Clock;
 
   
   // Main Testing:
@@ -62,6 +73,7 @@ module UART_RX_TB();
       // Send a command to the UART (exercise Rx)
       @(posedge r_Clock);
       UART_WRITE_BYTE(8'h14);
+#10000;
       @(posedge r_Clock);
             
       // Check that the correct command was received
@@ -69,18 +81,11 @@ module UART_RX_TB();
         $display("Test Passed - Correct Byte Received");
       else
         $display("Test Failed - Incorrect Byte Received");
-      $display(w_RX_Byte);
-
       @(posedge r_Clock);
-      UART_WRITE_BYTE(8'hff);
+#10000;
+      $display(w_TX_Byte);
       @(posedge r_Clock);
-            
-      // Check that the correct command was received
-      if (w_RX_Byte == 8'hff)
-        $display("Test Passed - Correct Byte Received");
-      else
-        $display("Test Failed - Incorrect Byte Received");
-      $display(w_RX_Byte);
+#10000;
     $finish();
     end
   

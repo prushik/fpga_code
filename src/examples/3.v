@@ -31,7 +31,7 @@ uart_rx uart_inst
 (
 	.i_clock(i_clk),
 	.i_rx_uart(i_uart_rx),
-	.o_rx_dv(o_uart_tx),
+	.o_rx_dv(),
 	.o_rx_byte(num)
 );
 

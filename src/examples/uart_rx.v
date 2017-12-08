@@ -61,13 +61,8 @@ begin
 			begin
 				r_cycle_count	<= 0;
 				r_dv			<= 1;
-				r_state			<= 4;
+				r_state			<= 0;
 			end
-		end
-		4:
-		begin
-			r_dv	<= 0;
-			r_state	<= 0;
 		end
 	endcase
 end
